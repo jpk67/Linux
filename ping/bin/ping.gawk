@@ -28,7 +28,7 @@ function play_sound(f)
 	count = 1;
 	if (f == "down") count = 4;
 	while (count > 0) {
-		system("ogg123 ~/ping/sounds/" f ".ogg 2>/dev/null");
+		system("ogg123 ~/src/Linux/ping/sounds/" f ".ogg 2>/dev/null");
 		count = count - 1;
 	}	
 }

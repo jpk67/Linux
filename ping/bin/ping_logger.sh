@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DATE=$(date +%Y_%m_%d)    #get date YYYY_MM_DD_HH_MM_SS
-LOGS=/home/jpk/ping/logs
+LOGS=/home/jpk/src/Linux/ping/logs
 DFILE=${LOGS}/details_$DATE.log
 SFILE=${LOGS}/summary_$DATE.log
 
