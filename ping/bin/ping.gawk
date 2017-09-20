@@ -20,7 +20,7 @@ function u2h(a)
 
 function s2hms(s)
 {
-    return sprintf("%sh %sm %ss", int((s%86400)/3600), int((s%3600)/60) ,s%60)
+    return sprintf("%sh %sm %ss", int((s%86400)/3600), int((s%3600)/60) ,s%60);
 }
 
 function play_sound(f)
