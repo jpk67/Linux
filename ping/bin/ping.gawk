@@ -28,7 +28,7 @@ function play_sound(f)
 	count = 1;
 	if (f == "down") count = 4;
 	while (count > 0) {
-		system("ogg123 ~/src/Linux/ping/sounds/" f ".ogg 2>/dev/null");
+		system("ogg123 ~/src/Linux/ping/sounds/" f ".ogg 2>/dev/null &");
 		count = count - 1;
 	}	
 }
@@ -46,19 +46,27 @@ function debug()
 { 
 	seq = getSeq($0);
 
-    if (match($0, "From gateway") ||
-	    match($0, "Destination Host Unreachable") ) {
+	#print
+
+	if (match($0, "From gateway") ||
+	    match($0, "Destination Host Unreachable")||
+		match($0, "Destination Net Unreachable")||
+		match($0, "from 192.168.1.1:")||
+		match($0, "unknown host") ) {
 		state = "Internet Down";
 		utime = getu($1);
+		#print "Matched Down patterns";
     }
     else if (match($0, "Network is unreachable") ) {
 		state = "NIC or gateway Down";
 		#utime = last_utime; # no timestamp on this type of line
+		#print "Matched Network unreachable patterns";
     } else {
+		#print "Nothing matched";
 		state = "UP";
 		utime = getu($1);
 		ping = getPing($0);
-		resp = ping<100 ? "fast" : (ping <500 ? "slow" : "deadslow");
+		resp = ping<500 ? "fast" : (ping <1000 ? "slow" : "deadslow");
 		if (last_seq+1 != seq) {
 			printf("%s - %d sequence numbers missing (%d -> %d)\n", u2h(utime),seq-last_seq+1,last_seq, seq);
 			resp = "dropping";
@@ -67,7 +75,7 @@ function debug()
     
     if (state != last_state) {
 		printf("%s - %s",u2h(utime), state);
-		if (state == "UP" && last_utime>0) printf(" after %s", s2hms(utime - last_utime));
+		if (last_utime>0) printf(" after %s", s2hms(utime - last_utime));
 		printf("\n");
 		last_utime = utime;
 		play_sound(state=="UP" ? "up":"down");
@@ -92,4 +100,6 @@ function debug()
     last_state = state;
     last_resp = resp;
 	last_seq = seq;
+
+	fflush();
 }
